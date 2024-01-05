@@ -9,10 +9,11 @@ import mongoose from 'mongoose'
 import router from './router'
 
 const app = express()
-const port = 3000
+const port = 3030
 
 app.use(cors({
-    credentials: true
+    credentials: true,
+    origin:'http://localhost:3000'
 }))
 
 app.use(compression())

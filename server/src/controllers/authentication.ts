@@ -1,17 +1,18 @@
 import express from 'express';
 
-import { getUserByEmail, createUser } from '../db/users';
+import { getUserByEmail, createUser, getUsers } from '../db/users';
 import { authentication, random } from '../utils';
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
+    if (!username || !password) {
       return res.sendStatus(400);
     }
 
-    const user = await getUserByEmail(email).select('+authentication.salt +authentication.password');
+    const user = await getUserByEmail(username).select('+authentication.salt +authentication.password');
+    
 
     if (!user) {
       return res.sendStatus(400);
@@ -25,10 +26,10 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     const salt = random();
     user.authentication!.sessionToken = authentication(salt, user._id.toString());
-
-    await user.save();
-
+    
     res.cookie('mylittleday-sessionToken', user.authentication!.sessionToken, { domain: 'localhost', path: '/' });
+    
+    await user.save();
 
     return res.status(200).json(user).end();
   } catch (error) {
