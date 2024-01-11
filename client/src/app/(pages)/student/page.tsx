@@ -2,7 +2,7 @@ import React from 'react'
 
 const Student = () => {
   return (
-    <div className='flex w-full min-h-screen'>Student</div>
+    <div className='flex w-full h-full'>Student</div>
   )
 }
 
