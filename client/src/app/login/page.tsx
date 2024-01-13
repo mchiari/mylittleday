@@ -1,8 +1,5 @@
 "use client";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
@@ -17,9 +14,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useQuery } from "react-query";
 
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   // console.log(router)
 
   const formSchema = z.object({
@@ -35,15 +33,29 @@ export default function Login() {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const request = axios
-      .post(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "auth/login", values, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        if(res.status === 200){
-          router.push('/')
+    // const request = axios
+    //   .post(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "auth/login", values, {
+    //     withCredentials: true,
+    //   })
+    //   .then((res) => {
+    //     if (res.status === 200) {
+    //       router.push("/");
+    //     }
+    //   });
+   //TODO: MAKE THIS POST WORK 
+
+    const req = useQuery("login", () =>
+      fetch(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "auth/login", {
+        credentials: "include",
+        method: "POST",
+        body: JSON.stringify(values),
+      }).then((res) => {
+        if (res.status === 200) {
+          router.push("/");
         }
-      });
+        return res.json();
+      })
+    );
   };
 
   return (
@@ -80,7 +92,11 @@ export default function Login() {
             )}
           />
 
-          <Button disabled={!form.formState.isValid} type="submit" className=" w-full">
+          <Button
+            disabled={!form.formState.isValid}
+            type="submit"
+            className=" w-full"
+          >
             Login
           </Button>
         </form>
