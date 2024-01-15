@@ -1,7 +1,40 @@
 "use client";
 
+import Spinner from "@/components/custom/Spinner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import React, { Suspense, useEffect } from "react";
 import { useQuery } from "react-query";
+import { User } from "./types";
+import { Button } from "@/components/ui/button";
+import { Pencil1Icon, Pencil2Icon } from "@radix-ui/react-icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import axios from "axios";
 
 const Users = () => {
   const { isLoading, error, data } = useQuery("getUsers", () =>
@@ -10,25 +43,147 @@ const Users = () => {
     }).then((res) => res.json())
   );
 
-  if (isLoading) return "Loading...";
+  // if (isLoading) return <Spinner />;
 
-  if (error) return "An error has occurred: " + error.message;
+  if (error) return "An error has occurred: " + error;
 
   return (
-    <ul>
-      {data.map((user) => {
-        return <li key={user.id}>{user.name}</li>;
-      })}
-    </ul>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead> </TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>E-mail</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data.map((user: User) => {
+          return (
+            <TableRow key={user._id}>
+              <TableCell>
+                <UserEditor user={user} />
+              </TableCell>
+              <TableCell>{user.name}</TableCell>
+              <TableCell>type</TableCell>
+              <TableCell>{user.email}</TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
   );
 };
 
-// const getUsers = async () => {
-//   const res = await api.get(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "users",{
-//     withCredentials: true
-//   });
-//   return res
-// };
+const UserEditor = ({ user }: { user: User }) => {
+  const formSchema = z.object({
+    name: z.string().max(50),
+    cpf: z.string().max(11)
+    // password: z.string().min(2).max(50),
+    // confirmPassword: z.string().min(2).max(50),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: user.name,
+      cpf: user.cpf
+      // password: "",
+      // confirmPassword: "",
+    },
+  });
+
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const request = axios
+      .put(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "users/"+user._id, values, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res)
+      });
+
+    //TODO: DEBUG UPDATE USER 
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger>
+        <Pencil2Icon />
+      </DialogTrigger>
+      <DialogContent className="bg-black">
+        <DialogHeader>
+          <DialogTitle>Edit user</DialogTitle>
+          <DialogDescription>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4 mt-4 justify-center items-center w-full">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="w-3/4">
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Insert e-mail" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="cpf"
+                    render={({ field }) => (
+                      <FormItem className="w-3/4">
+                        <FormLabel>CPF</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Insert cpf" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Insert new password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Insert password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  /> */}
+
+                  <Button
+                    disabled={!form.formState.isValid}
+                    type="submit"
+                    className="w-3/4"
+                  >
+                    Login
+                  </Button>
+                </form>
+              </Form>
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const User = async () => {
   // const users = await getUsers()
@@ -36,9 +191,15 @@ const User = async () => {
 
   return (
     <div className="flex justify-center items-center w-full h-full">
-      <Suspense fallback={<div>Loading...</div>}>
-        <Users />
-      </Suspense>
+      <div className="flex justify-center items-center w-[80%]">
+        {/* <div className="flex justify-end items-center w-full">
+      <Button onClick={handleAddUser}>Add user</Button>
+      </div> */}
+
+        <Suspense fallback={<Spinner />}>
+          <Users />
+        </Suspense>
+      </div>
     </div>
   );
 };

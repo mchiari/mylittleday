@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
-export const Providers = ({ children }) => {
+export const Providers = ({ children }: any) => {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -14,6 +14,7 @@ export const Providers = ({ children }) => {
             // With SSR, we usually want to set some default staleTime
             // above 0 to avoid refetching immediately on the client
             staleTime: 60 * 1000,
+            suspense: true
           },
         },
       }),

@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useQuery } from "react-query";
+import axios from "axios";
 
 export default function Login() {
   const router = useRouter();
@@ -29,33 +29,20 @@ export default function Login() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      password: "",
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // const request = axios
-    //   .post(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "auth/login", values, {
-    //     withCredentials: true,
-    //   })
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       router.push("/");
-    //     }
-    //   });
-   //TODO: MAKE THIS POST WORK 
-
-    const req = useQuery("login", () =>
-      fetch(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "auth/login", {
-        credentials: "include",
-        method: "POST",
-        body: JSON.stringify(values),
-      }).then((res) => {
+    const request = axios
+      .post(process.env.NEXT_PUBLIC_SERVER_BASE_PATH + "auth/login", values, {
+        withCredentials: true,
+      })
+      .then((res) => {
         if (res.status === 200) {
           router.push("/");
         }
-        return res.json();
-      })
-    );
+      });
   };
 
   return (
