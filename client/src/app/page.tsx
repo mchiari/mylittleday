@@ -1,16 +1,6 @@
-"use client";
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { QueryClient, QueryClientProvider } from "react-query";
+import React from "react";
 
 export default function Home() {
-  const router = useRouter();
-
-
-
-  useEffect(() => {
-    router.push("/feed");
-  }, []);
 
   return (
 

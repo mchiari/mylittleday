@@ -7,8 +7,6 @@ export const isOwner = async (req: express.Request, res: express.Response, next:
     const { id } = req.params;
     const currentUserId = get(req, "identity._id") as unknown as string;
 
-
-    console.log(currentUserId)
     if (!currentUserId) {
       return res.sendStatus(403);
     }
@@ -29,11 +27,11 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
     const sessionToken = req.cookies["mylittleday-sessionToken"];
 
     if (!sessionToken) {
-      return res.sendStatus(403);
+      return res.sendStatus(403)
     }
     
     const existingUser = await getUserBySessionToken(sessionToken);
-    console.log(existingUser)
+    // console.log(existingUser)
 
     if (!existingUser) {
       return res.sendStatus(403);

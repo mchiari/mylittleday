@@ -1,0 +1,16 @@
+{
+  "name": "mylittleday",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm start"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "printWidth": 160
+  },
+  "author": "",
+  "license": "ISC"
+}

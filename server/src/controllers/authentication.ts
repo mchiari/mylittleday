@@ -1,7 +1,7 @@
-import express from 'express';
+import express from "express";
 
-import { getUserByEmail, createUser, getUsers } from '../db/users';
-import { authentication, random } from '../utils';
+import { getUserByEmail, createUser, getUsers } from "../db/users";
+import { authentication, random } from "../utils";
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
@@ -11,24 +11,23 @@ export const login = async (req: express.Request, res: express.Response) => {
       return res.sendStatus(400);
     }
 
-    const user = await getUserByEmail(username).select('+authentication.salt +authentication.password');
-    
+    const user = await getUserByEmail(username).select("+authentication.salt +authentication.password");
 
     if (!user) {
       return res.sendStatus(400);
     }
 
     const expectedHash = authentication(user.authentication!.salt, password);
-    
+
     if (user.authentication!.password != expectedHash) {
       return res.sendStatus(403);
     }
 
     const salt = random();
     user.authentication!.sessionToken = authentication(salt, user._id.toString());
-    
-    res.cookie('mylittleday-sessionToken', user.authentication!.sessionToken, { domain: 'localhost', path: '/' });
-    
+
+    res.cookie("mylittleday-sessionToken", user.authentication!.sessionToken, { domain: "localhost", path: "/" });
+
     await user.save();
 
     return res.status(200).json(user).end();
@@ -47,7 +46,7 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
 
     const existingUser = await getUserByEmail(email);
-  
+
     if (existingUser) {
       return res.sendStatus(400);
     }
@@ -68,4 +67,4 @@ export const register = async (req: express.Request, res: express.Response) => {
     console.log(error);
     return res.sendStatus(400);
   }
-}
+};
