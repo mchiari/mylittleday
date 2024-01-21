@@ -2,7 +2,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import React from "react";
 import { useQuery } from "react-query";
-import { User } from "./types";
+import { UserI } from "./types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,12 +14,14 @@ import { Pencil2Icon } from "@radix-ui/react-icons";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const UserEditor = ({ user }: { user: User }) => {
+const UserEditor = ({ user }: { user: UserI }) => {
   const formSchema = z.object({
     name: z.string().max(50),
     cpf: z.string().max(11),
     _id: z.string(),
+    type: z.string()
     // password: z.string().min(2).max(50),
     // confirmPassword: z.string().min(2).max(50),
   });
@@ -30,6 +32,7 @@ const UserEditor = ({ user }: { user: User }) => {
       name: user.name,
       cpf: user.cpf,
       _id: user._id,
+      type: user.type 
       // password: "",
       // confirmPassword: "",
     },
@@ -94,6 +97,30 @@ const UserEditor = ({ user }: { user: User }) => {
                     </FormItem>
                   )}
                 />
+
+<FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem className={"w-full"}>
+                <FormLabel>Tipo de usuário</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value} >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo de usuário" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="student">Estudante</SelectItem>
+                    <SelectItem value="teacher">Professor</SelectItem>
+                    <SelectItem value="tutor">Tutor</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
                 {/* <FormField
                         control={form.control}
                         name="password"
@@ -155,14 +182,14 @@ const Users = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((user: User) => {
+        {data.map((user: UserI) => {
           return (
             <TableRow key={user._id}>
               <TableCell>
                 <UserEditor user={user} />
               </TableCell>
               <TableCell>{user.name}</TableCell>
-              <TableCell>type</TableCell>
+              <TableCell>{user.type}</TableCell>
               <TableCell>{user.email}</TableCell>
             </TableRow>
           );
