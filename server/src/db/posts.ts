@@ -12,11 +12,11 @@ const PostSchema = new mongoose.Schema({
 
 export const PostModel = mongoose.model("Post", PostSchema);
 
-export const getPosts = () => PostModel.find()
-export const getPost = (id: string) => PostModel.findOne({"_id": id})
+export const getPosts = () => PostModel.find().populate('author mentions');
+export const getPost = (id: string) => PostModel.findOne({"_id": id}).populate('author mentions');
 
 export const createNewPost = (values: Record<string, any>) => new PostModel(values).save().then((post) => post.toObject());
-export const updatePostById = (id: string, values: Record<string, any>) => PostModel.findByIdAndUpdate({"_id": id, values})
+export const updatePost = (id: string, values: Record<string, any>) => PostModel.findByIdAndUpdate({"_id": id, values})
 
 
 

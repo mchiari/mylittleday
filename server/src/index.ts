@@ -9,6 +9,9 @@ import mongoose from 'mongoose'
 import router from './router'
 
 const app = express()
+app.use(cookieParser())
+
+
 const port = 3030
 
 app.use(cors({
@@ -17,7 +20,6 @@ app.use(cors({
 }))
 
 app.use(compression())
-app.use(cookieParser())
 app.use(bodyParser.json())
 
 const server = http.createServer(app)

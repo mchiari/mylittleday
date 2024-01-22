@@ -1,12 +1,18 @@
 import express from "express";
-import { createNewPost, getPost, getPosts, updatePostById } from "../db/posts";
+import { createNewPost, getPost, getPosts } from "../db/posts";
 import { getUserById } from "../db/users";
 
 export const getAllPosts = async (req: express.Request, res: express.Response) => {
   try {
-    const posts = await getPosts();
+    const rawPosts = await getPosts();
 
-    return res.status(200).json(posts);
+    // let posts = []
+
+    // for(let post of rawPosts!){
+    //   let
+    // }
+
+    return res.status(200).json(rawPosts);
   } catch (error) {
     console.log(error);
     res.sendStatus(400);
@@ -17,24 +23,22 @@ export const getPostById = async (req: express.Request, res: express.Response) =
   try {
     const { id } = req.params;
 
-    const rawPost = await getPost(id);
+    const post = await getPost(id);
+    
+    // const rawPost = await getPost(id);
+    // const author = await getUserById(String(rawPost?.author));
+    // const rawMentions = rawPost?.mentions;
+    // let mentions = [];
+    // for (let mention of rawMentions!) {
+    //   let user = await getUserById(String(mention));
+    //   mentions.push(user);
+    // }
+    // const post = {
+    //   ...rawPost?.toJSON(),
+    //   author: author,
+    //   mentions: mentions,
+    // };
 
-    const author = await getUserById(String(rawPost?.author));
-
-    const rawMentions = rawPost?.mentions;
-
-    let mentions = [];
-
-    for (let mention of rawMentions!) {
-      let user = await getUserById(String(mention));
-      mentions.push(user);
-    }
-
-    const post = {
-      ...rawPost?.toJSON(),
-      author: author,
-      mentions: mentions,
-    };
 
     return res.status(200).json(post);
   } catch (error) {
@@ -60,7 +64,7 @@ export const createPost = async (req: express.Request, res: express.Response) =>
   }
 };
 
-export const updatePost = async (req: express.Request, res: express.Response) => {
+export const updatePostById = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const { author, title, content, mentions } = req.body;

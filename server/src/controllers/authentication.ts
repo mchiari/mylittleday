@@ -1,6 +1,6 @@
 import express from "express";
 
-import { getUserByEmail, createUser, getUsers } from "../db/users";
+import { getUserByEmail, createUser } from "../db/users";
 import { authentication, random } from "../utils";
 
 export const login = async (req: express.Request, res: express.Response) => {
@@ -26,7 +26,7 @@ export const login = async (req: express.Request, res: express.Response) => {
     const salt = random();
     user.authentication!.sessionToken = authentication(salt, user._id.toString());
 
-    res.cookie("mylittleday-sessionToken", user.authentication!.sessionToken, { domain: "localhost", path: "/" });
+    res.cookie("mylittleday-sessionToken", user.authentication!.sessionToken, { domain: "localhost", path: "/", httpOnly: true, maxAge: 86400000 })
 
     await user.save();
 
@@ -39,9 +39,9 @@ export const login = async (req: express.Request, res: express.Response) => {
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password, name, cpf } = req.body;
+    const { email, password, name, cpf, type } = req.body;
 
-    if (!email || !password || !name || !cpf) {
+    if (!email || !password || !name || !cpf || !type) {
       return res.sendStatus(400);
     }
 
@@ -56,13 +56,14 @@ export const register = async (req: express.Request, res: express.Response) => {
       email,
       name,
       cpf,
+      type,
       authentication: {
         salt,
         password: authentication(salt, password),
       },
     });
 
-    return res.status(200).json(user).end();
+    return res.status(200).json(true).end();
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);

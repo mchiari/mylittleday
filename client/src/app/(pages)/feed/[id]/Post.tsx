@@ -3,7 +3,7 @@ import React, { Suspense } from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "react-query";
 import { PostI } from "../types";
-import { UserI } from "../../user/types";
+import { UserI } from "../../users/types";
 
 const Post = () => {
   const { id } = useParams();

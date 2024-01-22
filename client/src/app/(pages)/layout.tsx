@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Menu from "./Menu";
+import UserData from "./UserData";
 
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default function RootLayout({
     <div className="flex flex-col justify-center items-center w-full h-screen">
       <nav className="flex justify-between items-center h-16 w-full">
         <Menu />
+        <UserData />
       </nav>
       <div className="flex justify-center items-center w-full h-full bg-neutral-700">
         {children}

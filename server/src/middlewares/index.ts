@@ -22,18 +22,21 @@ export const isOwner = async (req: express.Request, res: express.Response, next:
   }
 };
 
-export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction, ) => {
   try {
-    const sessionToken = req.cookies["mylittleday-sessionToken"];
+    const sessionToken = await req.cookies["mylittleday-sessionToken"]
+    console.log(sessionToken)
 
     if (!sessionToken) {
-      return res.sendStatus(403)
+      console.log("first");
+      return res.sendStatus(403);
     }
-    
+
     const existingUser = await getUserBySessionToken(sessionToken);
     // console.log(existingUser)
 
     if (!existingUser) {
+      console.log("second");
       return res.sendStatus(403);
     }
 

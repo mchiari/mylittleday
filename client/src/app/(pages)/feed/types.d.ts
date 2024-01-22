@@ -1,4 +1,4 @@
-import { UserI } from "../user/types"
+import { UserI } from "../users/types"
 
 export interface PostI {
     _id: mongoose.Types.ObjectId;
